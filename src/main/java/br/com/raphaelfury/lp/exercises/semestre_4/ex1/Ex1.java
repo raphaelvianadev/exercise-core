@@ -14,7 +14,7 @@ public class Ex1 extends Exercise {
 		double a, b;
 		Calculator calculator = new Calculator();
 		
-		log("Digite os n�meros desejados.");
+		log("Digite os números desejados.");
 		
 		a = getScanner().nextDouble();
 		b = getScanner().nextDouble();

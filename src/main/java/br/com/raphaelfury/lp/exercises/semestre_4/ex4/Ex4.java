@@ -26,8 +26,8 @@ public class Ex4 extends Exercise {
 	public void start() {
 		chocolateMap = new ChocolateMap();
 		
-		for (int i = 0; i < 2; i++) {
-			log("Digite o c�digo");
+		for (int i = 0; i < 3; i++) {
+			log("Digite o código");
 			codigo = getScanner().nextInt();
 			log("Digite o nome");
 			nome = getScanner().next();
@@ -95,10 +95,10 @@ public class Ex4 extends Exercise {
 
 	public void reduzirPreco() {
 		Chocolate chocolate = getChocolateMap().getStream().collect(Collectors.maxBy(Comparator.comparingDouble(Chocolate::getValorRevenda))).get();
-		log("ReduzirPre�o", "Chocolate: " + chocolate.getNome());
-		log("ReduzirPre�o", "Preço antigo: " + chocolate.getValorRevenda());
+		log("ReduzirPreço", "Chocolate: " + chocolate.getNome());
+		log("ReduzirPreço", "Preço antigo: " + chocolate.getValorRevenda());
 		chocolate.setValorRevenda(chocolate.getValorRevenda() - ((chocolate.getValorRevenda() * 50)/100));
-		log("ReduzirPre�o", "Pre�o novo (50% OFF): " + chocolate.getValorRevenda());
+		log("ReduzirPreço", "Preço novo (50% OFF): " + chocolate.getValorRevenda());
 		blankLine();
 	}
 	

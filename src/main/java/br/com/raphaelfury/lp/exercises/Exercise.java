@@ -3,6 +3,7 @@ package br.com.raphaelfury.lp.exercises;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
+import br.com.raphaelfury.core.logger.FormattedLogger;
 import br.com.raphaelfury.lp.Initializer;
 import br.com.raphaelfury.lp.utils.Logger;
 
@@ -30,16 +31,17 @@ public abstract class Exercise {
 		return scanner;
 	}
 
-	public Logger getLogger() {
-		return logger;
+	public FormattedLogger getLogger() {
+		return Initializer.getFormattedLogger();
 	}
 
 	public void log(String log) {
-		logger.log("[" + getName().toUpperCase() + "] " + log);
+		//logger.log("[" + getName().toUpperCase() + "] " + log);
+		getLogger().log(log);
 	}
 
 	public void blankLine() {
-		log(" ");
+		logger.log(" ");
 	}
 
 	public void log(String type, String log) {
@@ -62,7 +64,7 @@ public abstract class Exercise {
 		
 		if (option.equalsIgnoreCase("s") || option.equalsIgnoreCase("sim") || option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")) {
 			try {
-				Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises." + getName().toLowerCase() + "." + getName());
+				Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises.semestre_" + Initializer.SEMESTER + "." + getName().toLowerCase() + "." + getName());
 				try {
 					c.getMethod("start").invoke(c.newInstance());
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException e) {

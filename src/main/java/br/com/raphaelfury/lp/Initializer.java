@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import br.com.raphaelfury.core.logger.FormattedLogger;
 import br.com.raphaelfury.lp.loader.ClassLoader;
 import br.com.raphaelfury.lp.utils.Logger;
 
@@ -12,20 +13,27 @@ public class Initializer {
 	// Declaração de variáveis
 	public static ArrayList<Object> exercises = new ArrayList<Object>();
 	public static Initializer instance;
-	
+
+	public static final Logger logger = new Logger();
+	private static FormattedLogger formattedLogger;
+
+	public static int SEMESTER = 0;
+
 	// Main
 	public static void main(String[] args) {
+		setFormattedLogger(new FormattedLogger(java.util.logging.Logger.getGlobal(), null, true));
 		new Initializer().main();
+		
 	}
-
+	
 	public void main() {
-		//Definindo a instance
+		// Definindo a instance
 		instance = this;
-		
-		//Carregando e registrando os exercícios
+
+		// Carregando e registrando os exercícios
 		new ClassLoader().load();
-		
-		//Iniciando o "método principal"
+
+		// Iniciando o "método principal"
 		init();
 	}
 
@@ -33,26 +41,49 @@ public class Initializer {
 	public static void init() {
 		Logger logger = new Logger();
 		Scanner scanner = new Scanner(System.in);
-		String ex = null;
-
-		logger.clearScreen();
+		int ex;
+		
+		//logger.clearScreen();
 		logger.log("Deseja iniciar qual exercício?");
 		logger.log("OBS: Digite o nome do exercício corretamente e com os devidos caracteres. Exemplo: Ex1.");
-		logger.log("Exercícios disponíveis: " + exercises.toString().replace("[", "").replace("]", ""));
+		logger.log("Exercícios disponíveis: " + exercises.toString().replace("[", "").replace("]", "").replace("Ex", ""));
 
-		ex = scanner.next();
+		ex = scanner.nextInt();
 
-		if (exercises.contains(ex)) {
+		if (exercises.contains("Ex" + ex)) {
 			logger.log("Carregando o exercício: '" + ex + "'...");
 			String[] names = { "Iniciando.", "Iniciando..", "Iniciando..." };
 			boolean hasSelected = false;
 			int id = 0;
 			while (!hasSelected) {
-				if (id == names.length) {
+				if (ClassLoader.TEST) {
+					if (id == names.length) {
+						logger.clearScreen();
+						logger.log("Exercício carregado: " + ex);
+						try {
+							Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises.semestre_" + SEMESTER + ".ex" + ex + ".Ex" + ex);
+							try {
+								c.getMethod("start").invoke(c.newInstance());
+							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+									| NoSuchMethodException | SecurityException | InstantiationException e) {
+								e.printStackTrace();
+							}
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
+						hasSelected = true;
+						return;
+					}
+
+					logger.clearScreen();
+					logger.log(names[id]);
+					id++;
+					sleep();
+				} else {
 					logger.clearScreen();
 					logger.log("Exercício carregado: " + ex);
 					try {
-						Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises.semestre_5." + ex.toLowerCase() + "." + ex);
+						Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises.semestre_" + SEMESTER + ".ex" + ex + ".Ex" + ex);
 						try {
 							c.getMethod("start").invoke(c.newInstance());
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -65,14 +96,9 @@ public class Initializer {
 					hasSelected = true;
 					return;
 				}
-
-				logger.clearScreen();
-				logger.log(names[id]);
-				id++;
-				sleep();
 			}
 		} else {
-			logger.log("O exercício '" + ex + "' não foi encontrado");
+			logger.log("O exercício '" + ex + "[" + SEMESTER + "]' não foi encontrado");
 			init();
 		}
 	}
@@ -83,5 +109,17 @@ public class Initializer {
 		} catch (InterruptedException exception) {
 			exception.printStackTrace();
 		}
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+	
+	public static FormattedLogger getFormattedLogger() {
+		return formattedLogger;
+	}
+
+	public static void setFormattedLogger(FormattedLogger formattedLogger) {
+		Initializer.formattedLogger = formattedLogger;
 	}
 }
