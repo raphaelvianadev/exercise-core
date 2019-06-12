@@ -127,7 +127,7 @@ public class ProductImpl {
 	}
 
 	public void showMoreQuantity() {
-		Product product = Ex1.getProductMap().getStream() .collect(Collectors.maxBy(Comparator.comparingInt(Product::getSellQuantity))).get();
+		Product product = Ex1.getProductMap().getStream().collect(Collectors.maxBy(Comparator.comparingInt(Product::getSellQuantity))).get();
 
 		StringBuilder b = new StringBuilder();
 		b.append("\n");

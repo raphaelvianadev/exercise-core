@@ -66,7 +66,7 @@ public class ClassReader {
         }
     }
     
-    //
+    //test mode
     
     public static Class<?>[] getClasses(String packageName) throws ClassNotFoundException, IOException {
         java.lang.ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

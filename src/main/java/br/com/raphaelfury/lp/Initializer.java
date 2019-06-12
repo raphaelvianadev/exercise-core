@@ -13,14 +13,18 @@ public class Initializer {
 	// Declaração de variáveis
 	public static ArrayList<Object> exercises = new ArrayList<Object>();
 	public static Initializer instance;
+	
+	public static final String VERSION = "1.3.35";
 
 	public static final Logger logger = new Logger();
 	private static FormattedLogger formattedLogger;
+	private static Scanner scanner;
 
 	public static int SEMESTER = 0;
 
 	// Main
 	public static void main(String[] args) {
+		setScanner(new Scanner(System.in));
 		setFormattedLogger(new FormattedLogger(java.util.logging.Logger.getGlobal(), null, true));
 		new Initializer().main();
 		
@@ -44,6 +48,7 @@ public class Initializer {
 		int ex;
 		
 		//logger.clearScreen();
+		logger.simpleLog("ExerciseCore " + VERSION + " | " + (ClassLoader.TEST ? "Modo de teste | " : "") + (ClassLoader.casuals ? "Exercícios casuais." : "Exercícios eventuais."));
 		logger.log("Deseja iniciar qual exercício?");
 		logger.log("OBS: Digite o nome do exercício corretamente e com os devidos caracteres. Exemplo: Ex1.");
 		logger.log("Exercícios disponíveis: " + exercises.toString().replace("[", "").replace("]", "").replace("Ex", ""));
@@ -61,11 +66,10 @@ public class Initializer {
 						logger.clearScreen();
 						logger.log("Exercício carregado: " + ex);
 						try {
-							Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises.semestre_" + SEMESTER + ".ex" + ex + ".Ex" + ex);
+							Class<?> c = Class.forName(ClassLoader.casuals ? "br.com.raphaelfury.lp.exercises.semestre_" + SEMESTER + ".ex" + ex + ".Ex" + ex : "br.com.raphaelfury.lp.events.ex" + ex + ".Ex" + ex);
 							try {
 								c.getMethod("start").invoke(c.newInstance());
-							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-									| NoSuchMethodException | SecurityException | InstantiationException e) {
+							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | InstantiationException e) {
 								e.printStackTrace();
 							}
 						} catch (ClassNotFoundException e) {
@@ -98,7 +102,7 @@ public class Initializer {
 				}
 			}
 		} else {
-			logger.log("O exercício '" + ex + "[" + SEMESTER + "]' não foi encontrado");
+			logger.log("O exercício '" + ex + " (" + SEMESTER + ")' não foi encontrado");
 			init();
 		}
 	}
@@ -121,5 +125,13 @@ public class Initializer {
 
 	public static void setFormattedLogger(FormattedLogger formattedLogger) {
 		Initializer.formattedLogger = formattedLogger;
+	}
+
+	public static Scanner getScanner() {
+		return scanner;
+	}
+
+	public static void setScanner(Scanner scanner) {
+		Initializer.scanner = scanner;
 	}
 }

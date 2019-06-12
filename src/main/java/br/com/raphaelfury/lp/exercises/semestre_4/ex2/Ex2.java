@@ -6,7 +6,7 @@ import br.com.raphaelfury.lp.exercises.semestre_4.ex2.objects.Factor;
 public class Ex2 extends Exercise {
 	
 	public Ex2() {
-		super("Ex2", "Fatoração", true);
+		super("Ex2", "Fatoração", false);
 		// TODO Auto-generated constructor stub
 	}
 	

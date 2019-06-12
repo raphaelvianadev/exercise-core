@@ -3,6 +3,7 @@ package br.com.raphaelfury.lp.exercises;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
+import br.com.raphaelfury.core.confirmation.InputConfirmation;
 import br.com.raphaelfury.core.logger.FormattedLogger;
 import br.com.raphaelfury.lp.Initializer;
 import br.com.raphaelfury.lp.utils.Logger;
@@ -12,7 +13,7 @@ public abstract class Exercise {
 	private static final Scanner scanner = new Scanner(System.in);
 	private static final Logger logger = new Logger();
 
-	private String name;
+	private static String name;
 	private String description;
 	private boolean restartable, ended;
 
@@ -21,8 +22,6 @@ public abstract class Exercise {
 		this.setName(name);
 		this.setDescription(description);
 		this.setRestartable(restartable);
-		
-		sendInformations();
 	}
 
 	public abstract void start(); //Iniciar o método principal de exercícios.
@@ -52,17 +51,23 @@ public abstract class Exercise {
 		logger.error(error);
 	}
 	
-	public void sendInformations() {
-	}
-	
 	public void finalize() {
-		setEnded(true);
+		if (!isEnded())
+			setEnded(true);
+		
+		if (!isRestartable())
+			Initializer.init();
 		
 		String option;
 		log("Deseja reiniciar o exercício?");
 		option = getScanner().next();
 		
-		if (option.equalsIgnoreCase("s") || option.equalsIgnoreCase("sim") || option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")) {
+		if (option.equalsIgnoreCase("finalizar") || option.equalsIgnoreCase("finalize")) {
+			log("Exercício e programa encerrados.");
+			System.exit(0);
+		 }
+		
+		if (InputConfirmation.isConfirmable(option)) {
 			try {
 				Class<?> c = Class.forName("br.com.raphaelfury.lp.exercises.semestre_" + Initializer.SEMESTER + "." + getName().toLowerCase() + "." + getName());
 				try {
@@ -73,33 +78,16 @@ public abstract class Exercise {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-		} else if (option.equalsIgnoreCase("n") || option.equalsIgnoreCase("nao") || option.equalsIgnoreCase("não") || option.equalsIgnoreCase("no")) {
+		} else
 			Initializer.init();
-		} else if (option.equalsIgnoreCase("finalizar") || option.equalsIgnoreCase("finalize")) {
-			log("Exercício e programa encerrados.");
-			System.exit(0);
-		}
 	}
 
-	public void restart(String option) {
-		if (isEnded() && isRestartable()) {
-			if (option.equalsIgnoreCase("s") || option.equalsIgnoreCase("sim") || option.equalsIgnoreCase("y")
-					|| option.equalsIgnoreCase("yes")) {
-					Initializer.init();
-			} else if (option.equalsIgnoreCase("n") || option.equalsIgnoreCase("nao") || option.equalsIgnoreCase("não")
-					|| option.equalsIgnoreCase("no")) {
-				log("Exercício e programa encerrados.");
-				System.exit(0);
-			}
-		}
-	}
-
-	public String getName() {
+	public static String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		Exercise.name = name;
 	}
 
 	public String getDescription() {
